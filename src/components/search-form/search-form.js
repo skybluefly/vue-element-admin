@@ -3,6 +3,7 @@ export default {
   name: 'search-form',
   props: {
     ...Form.prop,
+    model: Object,
     items: {
       type: Array,
       default() {
@@ -13,21 +14,27 @@ export default {
   },
   methods: {
     createFormItem(h, item) {
-      const { model, ...otherPorps } = item
-      switch (item.type) {
+      const { type, prop, addition, ...otherPorps } = item
+      switch (type) {
         case 'input':
           return (
             [<el-input
-              v-model={model}
+              v-model={this.model[prop]}
               {...otherPorps}
             />,
-            item.addition ? item.addition() : null]
+            addition ? item.addition() : null]
           )
       }
     }
 
   },
   render(h) {
+    const props = {}
+    Object.keys(Form.props).forEach(name => {
+      if (this[name] !== undefined && this[name] !== null) {
+        props[name] = this[name]
+      }
+    })
     return h('el-form', {
       staticClass: 'search-form',
       ref: 'form',
@@ -44,25 +51,15 @@ export default {
         ...this.$listeners
       },
       props: {
-        model: this.model,
-        inline: this.inline,
-        labelWidth: this.labelWidth,
-        showMessage: this.showMessage,
-        disabled: this.disabled
+        ...props
       }
     }, this.items.map(item => {
-      if (item.hide) return // 新增隐藏属性
+      const { hide, ...otherProps } = item
+      if (hide) return // 新增隐藏属性
 
       return h('el-form-item', {
         props: {
-          prop: item.prop,
-          label: item.label,
-          required: item.required,
-          rules: item.rules,
-          error: item.error,
-          showMessage: item.showMessage || true,
-          inlineMessage: item.inlineMessage,
-          size: item.size
+          ...otherProps
         }
       }, [this.createFormItem(h, item)])
     }))

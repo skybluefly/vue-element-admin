@@ -1,18 +1,27 @@
 <template>
-  <div />
+  <SearchForm :model="FormModel" :items="items" />
 </template>
 
 <script>
-import { Form } from 'element-ui'
+import SearchForm from '../../components/search-form'
 export default {
   name: 'FormsIndex',
+  components: { SearchForm },
   data() {
     return {
-
+      FormModel: {
+        name: 'aaa'
+      },
+      items: [
+        {
+          type: 'input',
+          prop: 'name'
+        }
+      ]
     }
   },
   mounted() {
-    console.log(Form)
+    // console.log(Form)
   }
 }
 </script>

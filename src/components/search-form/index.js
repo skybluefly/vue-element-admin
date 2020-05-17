@@ -1,5 +1,5 @@
 import SearchFrom from './search-form'
-import './index.less'
+import './index.scss'
 SearchFrom.install = function(Vue) {
   Vue.component(SearchFrom.name, SearchFrom)
 }
