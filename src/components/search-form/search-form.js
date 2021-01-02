@@ -1,13 +1,10 @@
-import { Form, FormItem, Input, Select } from 'element-ui'
-import { getNewProps } from '@/utils'
+import { Form } from 'element-ui'
 export default {
-  name: 'x-form',
+  name: 'search-form',
   props: {
-    formOptions: {
-      type: Object,
-      default: () => {}
-    },
-    options: {
+    ...Form.prop,
+    model: Object,
+    items: {
       type: Array,
       default() {
         return []
@@ -15,55 +12,54 @@ export default {
     }
 
   },
-  data() {
-    return {
-      defaultKey: {
-        label: 'label',
-        value: 'value'
-      }
-    }
-  },
   methods: {
     createFormItem(h, item) {
-      const { model } = this.formOptions
-      const { defaultKey = this.defaultKey, data } = item
-      switch (item.types) {
+      const { type, prop, addition, ...otherPorps } = item
+      switch (type) {
         case 'input':
-          return <el-input
-            vModel={model[item.prop]}
-            {...{ attrs: getNewProps(Input, item), on: item.on }}
-            maxlength={item.maxlength}
-          />
-        case 'select':
-          return [<el-select
-            vModel={model[item.prop]}
-            {...{ attrs: getNewProps(Select, item) }}
-          >
-            {
-              Array.isArray(data) && data.map((item, index) => (
-                <s-option key={index} label={item[defaultKey.label]} value={item[defaultKey.value]}/>
-              ))
-            }
-          </el-select>]
+          return (
+            [<el-input
+              v-model={this.model[prop]}
+              {...otherPorps}
+            />,
+            addition ? item.addition() : null]
+          )
       }
     }
 
   },
   render(h) {
+    const props = {}
+    Object.keys(Form.props).forEach(name => {
+      if (this[name] !== undefined && this[name] !== null) {
+        props[name] = this[name]
+      }
+    })
     return h('el-form', {
       staticClass: 'search-form',
       ref: 'form',
+      directives: [
+        {
+          name: 'loading',
+          value: this.loading
+        }
+      ],
+      attrs: {
+        'element-loading-text': '拼命加载中...'
+      },
       on: {
         ...this.$listeners
       },
       props: {
-        ...getNewProps(Form, this.formOptions)
+        ...props
       }
-    }, this.options.map(item => {
-      if (item.hide) return
+    }, this.items.map(item => {
+      const { hide, ...otherProps } = item
+      if (hide) return // 新增隐藏属性
+
       return h('el-form-item', {
         props: {
-          ...getNewProps(FormItem, item)
+          ...otherProps
         }
       }, [this.createFormItem(h, item)])
     }))

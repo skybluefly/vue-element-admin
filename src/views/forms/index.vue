@@ -1,59 +1,27 @@
 <template>
-  <div>
-    <x-form
-      :form-options="formOptions"
-      :options="options"
-    />
-    <!--    <Dialog v-model="dialog" title="拉拉" :modal="modal" @close="test">-->
-    <!--      <span slot="title">2222222</span>-->
-    <!--      222-->
-    <!--      <span slot="footer">-->
-    <!--        <el-button @click="dialog = false">取 消</el-button>-->
-    <!--        <el-button type="primary" @click="dialog = false">确 定</el-button>-->
-    <!--      </span>-->
-    <!--    </Dialog>-->
-    <el-button @click="click">点击弹窗</el-button>
-  </div>
+  <SearchForm :model="FormModel" :items="items" />
 </template>
 
 <script>
-import XForm from '@/components/search-form'
-// import Dialog from '@/components/Dialog/modal.vue'
-import Test from './test.vue'
+import SearchForm from '../../components/search-form'
 export default {
   name: 'FormsIndex',
-  components: { XForm },
+  components: { SearchForm },
   data() {
     return {
-      dialog: false,
-      modal: true,
-      formOptions: {
-        model: {
-          name: 'text'
-        }
+      FormModel: {
+        name: 'aaa'
       },
-      options: [
-        { types: 'input', label: '姓名', prop: 'name', clearable: true }
+      items: [
+        {
+          type: 'input',
+          prop: 'name'
+        }
       ]
     }
   },
   mounted() {
-  },
-  methods: {
-    click() {
-      console.log(Test)
-      this.$CDialog.open({
-        title: '测试',
-        width: '30%',
-        component: Test,
-        data: {
-          test: '1111'
-        }
-      })
-    },
-    test() {
-      console.log(1)
-    }
+    // console.log(Form)
   }
 }
 </script>
