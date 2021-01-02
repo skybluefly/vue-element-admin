@@ -1,9 +1,13 @@
-import { Form } from 'element-ui'
+import { Form, FormItem, Input, Select } from 'element-ui'
+import { getNewProps } from '@/utils'
 export default {
-  name: 'search-form',
+  name: 'x-form',
   props: {
-    ...Form.prop,
-    items: {
+    formOptions: {
+      type: Object,
+      default: () => {}
+    },
+    options: {
       type: Array,
       default() {
         return []
@@ -11,18 +15,36 @@ export default {
     }
 
   },
+  data() {
+    return {
+      defaultKey: {
+        label: 'label',
+        value: 'value'
+      }
+    }
+  },
   methods: {
     createFormItem(h, item) {
-      const { model, ...otherPorps } = item
-      switch (item.type) {
+      const { model } = this.formOptions
+      const { defaultKey = this.defaultKey, data } = item
+      switch (item.types) {
         case 'input':
-          return (
-            [<el-input
-              v-model={model}
-              {...otherPorps}
-            />,
-            item.addition ? item.addition() : null]
-          )
+          return <el-input
+            vModel={model[item.prop]}
+            {...{ attrs: getNewProps(Input, item), on: item.on }}
+            maxlength={item.maxlength}
+          />
+        case 'select':
+          return [<el-select
+            vModel={model[item.prop]}
+            {...{ attrs: getNewProps(Select, item) }}
+          >
+            {
+              Array.isArray(data) && data.map((item, index) => (
+                <s-option key={index} label={item[defaultKey.label]} value={item[defaultKey.value]}/>
+              ))
+            }
+          </el-select>]
       }
     }
 
@@ -31,38 +53,17 @@ export default {
     return h('el-form', {
       staticClass: 'search-form',
       ref: 'form',
-      directives: [
-        {
-          name: 'loading',
-          value: this.loading
-        }
-      ],
-      attrs: {
-        'element-loading-text': '拼命加载中...'
-      },
       on: {
         ...this.$listeners
       },
       props: {
-        model: this.model,
-        inline: this.inline,
-        labelWidth: this.labelWidth,
-        showMessage: this.showMessage,
-        disabled: this.disabled
+        ...getNewProps(Form, this.formOptions)
       }
-    }, this.items.map(item => {
-      if (item.hide) return // 新增隐藏属性
-
+    }, this.options.map(item => {
+      if (item.hide) return
       return h('el-form-item', {
         props: {
-          prop: item.prop,
-          label: item.label,
-          required: item.required,
-          rules: item.rules,
-          error: item.error,
-          showMessage: item.showMessage || true,
-          inlineMessage: item.inlineMessage,
-          size: item.size
+          ...getNewProps(FormItem, item)
         }
       }, [this.createFormItem(h, item)])
     }))

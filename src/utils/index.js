@@ -3,6 +3,21 @@
  */
 
 /**
+ * Get component props
+ * @param {(Object)} component
+ * @param {Object} target
+ * @returns {object | null}
+ */
+export function getNewProps(component, target) {
+  const props = {}
+  Object.keys(component.props).forEach(key => {
+    if (target[key] !== undefined && target[key] !== null) {
+      props[key] = target[key]
+    }
+  })
+  return props
+}
+/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
