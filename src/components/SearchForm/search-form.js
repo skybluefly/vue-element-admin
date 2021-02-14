@@ -9,8 +9,20 @@ export default {
       default() {
         return []
       }
+    },
+    formSubmit: {
+      type: Function,
+      default: () => {}
     }
 
+  },
+  data() {
+    return {
+      defaultProp: {
+        label: 'label',
+        value: 'value'
+      }
+    }
   },
   methods: {
     createFormItem(h, item) {
@@ -25,6 +37,15 @@ export default {
             addition ? item.addition() : null]
           )
       }
+    },
+    getProps(Plugin, target) {
+      const props = {}
+      Object.keys({ ...Plugin.props, class: '' }).forEach(name => {
+        if (target[name] !== undefined && target[name] !== null) {
+          props[name] = target[name]
+        }
+      })
+      return props
     }
 
   },

@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import XForm from '@/components/search-form'
-// import Dialog from '@/components/Dialog/modal.vue'
+import XForm from '@/components/SearchForm'
+
 import Test from './test.vue'
 export default {
   name: 'FormsIndex',
@@ -42,7 +42,7 @@ export default {
   methods: {
     click() {
       console.log(Test)
-      this.$CDialog.open({
+      this.$XDialog.open({
         title: '测试',
         width: '30%',
         component: Test,
